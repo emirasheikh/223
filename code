@@ -1,1 +1,95 @@
+pipeline {
+    agent any
+    
+    environment {
+        EMAIL_RECIPIENT = 'developer@gmail.com'
+    }
+
+    stages {
+        stage('Build') {
+            steps {
+                echo 'Building...'
+                // Add your build steps here
+            }
+        }
+        stage('Unit and Integration Tests') {
+            steps {
+                echo "Running unit and integration tests..."
+                echo "Running tests"
+            }
+            post {
+                always {
+                    echo "Sending notification email to ${env.EMAIL_RECIPIENT}..."
+                    sh "touch logs.txt"
+                    echo "Attaching logs.txt..."
+                }
+                success {
+                    echo "Status: Success"
+                    emailext(
+                        subject: "Unit and Integration Test Status: SUCCESS",
+                        body: "Unit and Integration Tests passed successfully.",
+                        to: env.EMAIL_RECIPIENT,
+                        attachmentsPattern: "**/logs.txt"
+                    )
+                }
+                failure {
+                    echo "Status: Failure"
+                    emailext(
+                        subject: "Unit and Integration Test Status: FAILURE",
+                        body: "Unit and Integration Tests failed.",
+                        to: env.EMAIL_RECIPIENT,
+                        attachmentsPattern: "**/logs.txt"
+                    )
+                }
+            }
+        }
+        stage('Code Analysis') {
+            steps {
+                echo 'Performing code analysis...'
+                // Add your code analysis steps here
+            }
+        }
+        stage('Security Scan') {
+            steps {
+                echo 'Running security scan...'
+                // Add your security scan steps here
+            }
+            post {
+                always {
+                    script {
+                        sendEmailNotification(currentBuild.currentResult, 'Security Scan')
+                    }
+                }
+            }
+        }
+        stage('Deploy to Staging') {
+            steps {
+                echo 'Deploying to staging...'
+                // Add your deployment steps here
+            }
+        }
+        stage('Integration Tests on Staging') {
+            steps {
+                echo 'Running integration tests on staging...'
+                // Add your staging test steps here
+            }
+        }
+        stage('Deploy to Production') {
+            steps {
+                echo 'Deploying to production...'
+                // Add your production deployment steps here
+            }
+        }
+    }
+}
+
+def sendEmailNotification(buildStatus, stageName) {
+    emailext (
+        subject: "${stageName} Stage - Build ${buildStatus}",
+        body: """<p>${stageName} Stage has completed with status: ${buildStatus}</p>
+                 <p>Check Jenkins for details.</p>""",
+        to: "${env.EMAIL_RECIPIENT}",
+        attachLog: true
+    )
+}
 
