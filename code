@@ -71,7 +71,9 @@ pipeline {
         stage('Integration Tests on Staging') {
             steps {
                 echo 'Running integration tests on staging...'
-                post {
+                // Add your staging test steps here
+            }
+            post {
                 always {
                     echo "Sending notification email to ${env.EMAIL_RECIPIENT}..."
                     sh "touch logs.txt"
@@ -79,25 +81,28 @@ pipeline {
                 }
                 success {
                     echo "Status: Success"
-                    mail to: "${EMAIL}",
-                    subject: "integration Test Status",
-                    body: "Tests were successfully carried out."
-                    
+                    emailext(
+                        subject: "Integration Test Status: SUCCESS",
+                        body: "Integration Tests on staging passed successfully.",
+                        to: env.EMAIL_RECIPIENT,
+                        attachmentsPattern: "**/logs.txt"
+                    )
                 }
                 failure {
                     echo "Status: Failure"
-                     mail to: "${EMAIL}",
-                    subject: "integration Test Status",
-                    body: "Tests failed to be carried out."
-                    
+                    emailext(
+                        subject: "Integration Test Status: FAILURE",
+                        body: "Integration Tests on staging failed.",
+                        to: env.EMAIL_RECIPIENT,
+                        attachmentsPattern: "**/logs.txt"
+                    )
                 }
             }
         }
-          
         stage('Deploy to Production') {
             steps {
                 echo 'Deploying to production...'
-                
+                // Add your production deployment steps here
             }
         }
     }
