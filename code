@@ -46,13 +46,13 @@ pipeline {
         stage('Code Analysis') {
             steps {
                 echo 'Performing code analysis...'
-                // Add your code analysis steps here
+                
             }
         }
         stage('Security Scan') {
             steps {
                 echo 'Running security scan...'
-                // Add your security scan steps here
+               
             }
             post {
                 always {
@@ -65,13 +65,13 @@ pipeline {
         stage('Deploy to Staging') {
             steps {
                 echo 'Deploying to staging...'
-                // Add your deployment steps here
+                
             }
         }
         stage('Integration Tests on Staging') {
             steps {
                 echo 'Running integration tests on staging...'
-                // Add your staging test steps here
+                
             }
             post {
                 always {
