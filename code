@@ -21,7 +21,7 @@ pipeline {
                 always {
                     echo "Sending notification email to ${env.EMAIL_RECIPIENT}..."
                     sh "touch logs.txt"
-                    echo "Attaching logs.txt..."
+                    archiveArtifacts artifacts: 'logs.txt', allowEmptyArchive: true
                 }
                 success {
                     echo "Status: Success"
@@ -77,7 +77,7 @@ pipeline {
                 always {
                     echo "Sending notification email to ${env.EMAIL_RECIPIENT}..."
                     sh "touch logs.txt"
-                    echo "Attaching logs.txt..."
+                    archiveArtifacts artifacts: 'logs.txt', allowEmptyArchive: true
                 }
                 success {
                     echo "Status: Success"
